@@ -5,27 +5,36 @@ from sqlalchemy import text
 import os
 
 app = Flask(__name__)
+
+# Sample static loan data for testing
+loans = [
+    {"borrower_name": "John Doe", "amount": 1000, "interest_rate": 5.5, "term_months": 12},
+    {"borrower_name": "Jane Smith", "amount": 2000, "interest_rate": 6.0, "term_months": 24},
+]
+
 CORS(app)
 
-# ✅ Supabase connection string
+# Supabase connection string
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:sandhiyasuchi%4024@db.ywxtpsuxljfjdobrmftm.supabase.co:5432/postgres'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
-# ✅ Define your Customer model
 class Customer(db.Model):
     __tablename__ = 'customers'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
     email = db.Column(db.String)
 
-# ✅ Route: Home
 @app.route('/')
 def home():
     return "Flask backend is connected to Supabase!"
 
-# ✅ Route: Add a new customer
+@app.route('/api/loans', methods=['GET'])
+def get_loans():
+    # For now, return static loans list
+    return jsonify(loans)
+
 @app.route('/add-user', methods=['POST'])
 def add_user():
     data = request.get_json()
@@ -43,7 +52,6 @@ def add_user():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# ✅ Route: Get users (from customers table)
 @app.route('/get-users', methods=['GET'])
 def get_users():
     try:
@@ -53,13 +61,11 @@ def get_users():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# ✅ Route: Get all customers (alternative)
 @app.route('/customers', methods=['GET'])
 def get_customers():
     customers = Customer.query.all()
     return jsonify([{'id': c.id, 'name': c.name, 'email': c.email} for c in customers])
 
-# ✅ Run the app
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)
