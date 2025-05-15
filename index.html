@@ -31,8 +31,7 @@
   <ul id="loanList"></ul>
 
   <script>
-    const API_URL = 'http://localhost:5000/api/loans';
-
+    const API_URL = 'https://small-finance-backend.onrender.com/api/loans';
     const loanForm = document.getElementById('loanForm');
     const loanList = document.getElementById('loanList');
 
@@ -44,7 +43,7 @@
       loans.forEach(loan => {
         const li = document.createElement('li');
         li.className = 'loan-item';
-        li.textContent = ${loan.borrower_name} - $${loan.amount} @ ${loan.interest_rate}% for ${loan.term_months} months;
+        li.textContent = `${loan.borrower_name} - $${loan.amount} @ ${loan.interest_rate}% for ${loan.term_months} months`;
         loanList.appendChild(li);
       });
     }
